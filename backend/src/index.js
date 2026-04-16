@@ -8,6 +8,7 @@ const config = require('./config');
 // Import routes
 const authRoutes = require('./routes/auth');
 const analyticsRoutes = require('./routes/analytics');
+const syncRoutes = require('./routes/sync');
 
 const app = express();
 
@@ -48,6 +49,7 @@ app.get('/api/health', (req, res) => {
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/sync', syncRoutes);
 
 // 404 handler
 app.use((req, res) => {

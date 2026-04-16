@@ -39,4 +39,7 @@ export const api = {
 
   // Health
   health: () => request('/health'),
+
+  // Sync (manual fetch trigger)
+  syncNow: () => request('/sync/now', { method: 'POST' }),
 };

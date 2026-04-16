@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../AuthContext';
 import { api } from '../api';
-import { Settings, User, Github, Code2, Shield } from 'lucide-react';
+import { Settings, User, Github, Code2, Shield, RefreshCw } from 'lucide-react';
 
 export default function SettingsPage() {
   const { user, updateUser, logout } = useAuth();
@@ -10,6 +10,7 @@ export default function SettingsPage() {
     leetcode_username: user?.leetcode_username || '',
   });
   const [saving, setSaving] = useState(false);
+  const [syncing, setSyncing] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
   const handleChange = (e) => {
@@ -30,6 +31,23 @@ export default function SettingsPage() {
       setMessage({ type: 'error', text: err.message });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSync = async () => {
+    setSyncing(true);
+    setMessage({ type: '', text: '' });
+    try {
+      const data = await api.syncNow();
+      const parts = [];
+      if (data.results.github === 'success') parts.push('✅ GitHub data fetched');
+      if (data.results.leetcode === 'success') parts.push('✅ LeetCode data fetched');
+      if (data.results.errors?.length > 0) parts.push('⚠️ ' + data.results.errors.join(', '));
+      setMessage({ type: parts.length > 0 && !data.results.errors?.length ? 'success' : 'error', text: parts.join(' | ') || 'No platforms configured. Add usernames above first.' });
+    } catch (err) {
+      setMessage({ type: 'error', text: err.message });
+    } finally {
+      setSyncing(false);
     }
   };
 
@@ -111,6 +129,10 @@ export default function SettingsPage() {
               <div className="settings-actions">
                 <button type="submit" className="btn btn-primary" disabled={saving}>
                   {saving ? 'Saving...' : 'Save Changes'}
+                </button>
+                <button type="button" className="btn btn-ghost" onClick={handleSync} disabled={syncing} style={{ gap: '0.4rem' }}>
+                  <RefreshCw size={15} className={syncing ? 'spinning' : ''} style={syncing ? { animation: 'spin 1s linear infinite' } : {}} />
+                  {syncing ? 'Syncing...' : '⚡ Sync Now'}
                 </button>
               </div>
             </div>
