@@ -1,0 +1,17 @@
+# ============================================
+# CodeBoard - ConfigMap
+# Non-sensitive configuration values
+# ============================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: codeboard-config
+  namespace: codeboard
+data:
+  DB_HOST: "postgres-service"
+  DB_PORT: "5432"
+  DB_NAME: "codeboard"
+  DB_USER: "codeboard_user"
+  NODE_ENV: "production"
+  CORS_ORIGIN: "http://codeboard.example.com"
+  FETCH_CRON: "0 */6 * * *"

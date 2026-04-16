@@ -1,0 +1,77 @@
+# ============================================
+# CodeBoard - Docker Compose
+# Runs all services locally with one command
+# ============================================
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: codeboard-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: codeboard
+      POSTGRES_USER: codeboard_user
+      POSTGRES_PASSWORD: codeboard_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U codeboard_user -d codeboard"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  backend:
+    build: ./backend
+    container_name: codeboard-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      NODE_ENV: production
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: codeboard
+      DB_USER: codeboard_user
+      DB_PASSWORD: codeboard_pass
+      JWT_SECRET: change-this-to-a-strong-secret-in-production
+      JWT_EXPIRES_IN: 7d
+      CORS_ORIGIN: http://localhost
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Worker Service
+  worker:
+    build: ./worker
+    container_name: codeboard-worker
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: codeboard
+      DB_USER: codeboard_user
+      DB_PASSWORD: codeboard_pass
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      FETCH_CRON: "0 */6 * * *"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Frontend (Nginx)
+  frontend:
+    build: ./frontend
+    container_name: codeboard-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

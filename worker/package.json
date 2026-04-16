@@ -1,0 +1,20 @@
+{
+  "name": "codeboard-worker",
+  "version": "1.0.0",
+  "description": "CodeBoard Worker Service - Fetches GitHub and LeetCode data",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest --coverage"
+  },
+  "dependencies": {
+    "pg": "^8.13.0",
+    "node-cron": "^3.0.3",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7",
+    "jest": "^29.7.0"
+  }
+}

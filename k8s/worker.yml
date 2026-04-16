@@ -1,0 +1,44 @@
+# ============================================
+# CodeBoard - Worker Deployment
+# ============================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  namespace: codeboard
+  labels:
+    app: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+        - name: worker
+          image: ghcr.io/YOUR_USERNAME/codeboard-worker:latest
+          envFrom:
+            - configMapRef:
+                name: codeboard-config
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: codeboard-secrets
+                  key: db-password
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: codeboard-secrets
+                  key: github-token
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "300m"
