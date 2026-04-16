@@ -1,0 +1,108 @@
+# ============================================
+# Render.com Blueprint - Deploy All Services
+# https://render.com/docs/blueprint-spec
+# ============================================
+
+databases:
+  - name: codeboard-db
+    databaseName: codeboard
+    user: codeboard_user
+    plan: free
+    region: oregon
+
+services:
+  # ---- Backend API ----
+  - type: web
+    name: codeboard-backend
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node src/index.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: DB_HOST
+        fromDatabase:
+          name: codeboard-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: codeboard-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: codeboard-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: codeboard-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: codeboard-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: https://codeboard-frontend.onrender.com
+
+  # ---- Worker Service ----
+  - type: worker
+    name: codeboard-worker
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: worker
+    buildCommand: npm install
+    startCommand: node src/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_HOST
+        fromDatabase:
+          name: codeboard-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: codeboard-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: codeboard-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: codeboard-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: codeboard-db
+          property: password
+      - key: FETCH_CRON
+        value: "0 */6 * * *"
+
+  # ---- Frontend (Static Site) ----
+  - type: web
+    name: codeboard-frontend
+    runtime: static
+    plan: free
+    region: oregon
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-cache
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://codeboard-backend.onrender.com/api/*
+      - type: rewrite
+        source: /*
+        destination: /index.html
