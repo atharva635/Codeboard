@@ -20,7 +20,8 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ghcr.io/YOUR_USERNAME/codeboard-backend:latest
+          image: codeboard-backend:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 5000
           envFrom:

@@ -20,7 +20,8 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/YOUR_USERNAME/codeboard-frontend:latest
+          image: codeboard-frontend:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 80
           resources:

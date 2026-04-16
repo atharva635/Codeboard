@@ -20,7 +20,8 @@ spec:
     spec:
       containers:
         - name: worker
-          image: ghcr.io/YOUR_USERNAME/codeboard-worker:latest
+          image: codeboard-worker:latest
+          imagePullPolicy: Never
           envFrom:
             - configMapRef:
                 name: codeboard-config
