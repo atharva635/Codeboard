@@ -49,7 +49,7 @@ COPY package*.json ./
 RUN npm ci                    # Install dependencies
 COPY . .
 RUN npm run build             # Build production bundle
-
+    
 # Stage 2: Serve with Nginx (tiny image, ~30MB)
 FROM nginx:alpine
 COPY --from=build /app/dist /usr/share/nginx/html
@@ -152,13 +152,13 @@ graph LR
 ```bash
 # Create a repo on GitHub first (github.com/new), then:
 cd d:\Codeboard
-git remote add origin https://github.com/YOUR_USERNAME/codeboard.git
+git remote add origin https://github.com/PriyanshiVishwakarma09/codeboard.git
 git branch -M main
 git push -u origin main
 ```
 
 **Step 2: Show the Actions tab on GitHub**
-- Go to `https://github.com/YOUR_USERNAME/codeboard/actions`
+- Go to `https://github.com/PriyanshiVishwakarma09/codeboard/actions`
 - You'll see the CI pipeline running automatically!
 - Show the jobs: Backend Test → Frontend Build → Worker Test → Docker Build
 
@@ -342,15 +342,15 @@ cd d:\Codeboard
 # 1. Create a repo on GitHub (go to github.com/new, name it "codeboard")
 
 # 2. Connect and push
-git remote add origin https://github.com/YOUR_USERNAME/codeboard.git
+git remote add origin https://github.com/PriyanshiVishwakarma09/codeboard.git
 git branch -M main
 git push -u origin main
 
-# 3. Go to https://github.com/YOUR_USERNAME/codeboard/actions
+# 3. Go to https://github.com/PriyanshiVishwakarma09/codeboard/actions
 #    Watch the CI pipeline run automatically!
 ```
 
 > [!IMPORTANT]
-> Replace `YOUR_USERNAME` with your actual GitHub username in:
+> Replace `PriyanshiVishwakarma09` with your actual GitHub username in:
 > - The git remote URL above
 > - `k8s/backend.yml`, `k8s/worker.yml`, `k8s/frontend.yml` (image paths)
