@@ -175,7 +175,9 @@ kubectl get services -n codeboard
 - 📱 **Responsive** — Works on desktop and mobile
 
 ## 🔐 Environment Variables
-
+###Atharva<br>
+Frontend Developer<br>
+Backend Developer
 ### Backend (.env)
 | Variable | Description | Default |
 |----------|-------------|---------|
